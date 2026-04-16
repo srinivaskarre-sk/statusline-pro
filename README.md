@@ -55,7 +55,7 @@ Then remove the `statusLine` block from `~/.claude/settings.json`.
 | 🌅 / ☕ / 🌙 + label | Local time of day |
 | ⏱ duration, 🔥 tokens, `%` context, `$` cost | JSON piped in by Claude Code |
 | 🌿 +N | Commits on your current branch that aren't on the default branch yet (i.e. what would go in a PR). Hidden on the default branch or outside a git repo |
-| 📰 `[score↑] title (domain)` | Hacker News top stories, cached for 30 min. Title is a clickable OSC8 hyperlink in supported terminals (iTerm2, WezTerm, Kitty, Terminal.app) |
+| 📰 `[score↑] title (domain)` | Hacker News front-page stories (in HN's own ranking order, filtered to the last 24h), cached for 30 min. Title is a clickable OSC8 hyperlink in supported terminals (iTerm2, WezTerm, Kitty, Terminal.app) |
 
 Segments with nothing to show (e.g. no git history, no cost data) are omitted silently.
 

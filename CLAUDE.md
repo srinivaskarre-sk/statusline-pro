@@ -47,7 +47,8 @@ This is the only segment that does network I/O, and the pattern matters:
 - TTL is 30 minutes. If the cache is fresh, `getHNStatus()` is synchronous-ish and fast.
 - If the cache is **stale but present**, it's served immediately and `triggerBackgroundRefresh()` spawns `src/refresh-worker.js` as a detached, stdio-ignored child process. The parent exits without waiting.
 - Only if there's **no cache at all** does it fetch synchronously (bounded by a 3s `AbortController` timeout).
-- Stories are filtered: `score >= 50`, posted within the last 24h, `type === "story"`. Rotation advances via `hn-state.json` only after the current story has been displayed for `STORY_MIN_DISPLAY_MS` (15s) — Claude Code can re-render the status line many times a second and we don't want the headline to flicker faster than a human can read it.
+- Fetched from HN's `topstories.json` endpoint. **The order HN returns is the front-page ranking** (score with time decay) — do not re-sort by raw score, or low-score-but-fresh stories will get buried. Stories are filtered to `type === "story"` and posted within the last 24h; no minimum score.
+- Rotation advances via `hn-state.json` only after the current story has been displayed for `STORY_MIN_DISPLAY_MS` (15s) — Claude Code can re-render the status line many times a second and we don't want the headline to flicker faster than a human can read it.
 - Titles are rendered as OSC8 hyperlinks (`\e]8;;URL\e\\TEXT\e]8;;\e\\`) so supporting terminals make them clickable; others show plain text.
 
 When modifying this module, preserve the invariant that **a cold render never blocks on the network for more than 3s** and a warm render never blocks at all.

@@ -11,8 +11,7 @@ const STATE_FILE = join(CONFIG_DIR, "hn-state.json");
 const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 const STORY_COUNT = 30;
 const FETCH_TIMEOUT_MS = 3000;
-const MAX_AGE_HOURS = 24; // Only show stories posted in the last 24h
-const MIN_SCORE = 50; // Filter out low-signal stories
+const MAX_AGE_HOURS = 24; // Only show stories posted in the last 24h ("today" on HN)
 const STORY_MIN_DISPLAY_MS = 15 * 1000; // Keep each story on screen long enough to read
 
 function ensureDir() {
@@ -40,12 +39,13 @@ async function fetchWithTimeout(url, ms) {
 }
 
 export async function refreshCache() {
-  // beststories = top-voted recent stories (better "today's tech news" signal than topstories)
+  // topstories = HN's front-page ranking (score with time decay). The order
+  // matches what you see on news.ycombinator.com — do not re-sort by score.
   const ids = await fetchWithTimeout(
-    "https://hacker-news.firebaseio.com/v0/beststories.json",
+    "https://hacker-news.firebaseio.com/v0/topstories.json",
     FETCH_TIMEOUT_MS,
   );
-  const topIds = ids.slice(0, STORY_COUNT * 2); // fetch extra since we'll filter
+  const topIds = ids.slice(0, STORY_COUNT * 2); // fetch extra since some will be filtered by age/type
 
   const stories = await Promise.all(
     topIds.map((id) =>
@@ -64,10 +64,8 @@ export async function refreshCache() {
         s &&
         s.title &&
         s.type === "story" &&
-        (s.score || 0) >= MIN_SCORE &&
         (s.time || 0) >= cutoff,
     )
-    .sort((a, b) => (b.score || 0) - (a.score || 0))
     .slice(0, STORY_COUNT)
     .map((s) => ({
       id: s.id,
