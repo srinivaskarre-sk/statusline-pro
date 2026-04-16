@@ -1,0 +1,32 @@
+{
+  "name": "statusline-pro",
+  "version": "0.1.0",
+  "description": "A lightweight, fun Claude Code status line with session stats, git streaks, mood, and Hacker News headlines",
+  "main": "src/index.js",
+  "bin": {
+    "statusline-pro": "./bin/cli.js"
+  },
+  "scripts": {
+    "start": "node bin/cli.js",
+    "test": "node bin/cli.js"
+  },
+  "keywords": ["claude-code", "statusline", "terminal", "cli", "hackernews"],
+  "author": "srinivaskarre",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin/",
+    "src/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srinivaskarre-sk/statusline-pro.git"
+  },
+  "bugs": {
+    "url": "https://github.com/srinivaskarre-sk/statusline-pro/issues"
+  },
+  "homepage": "https://github.com/srinivaskarre-sk/statusline-pro#readme"
+}
