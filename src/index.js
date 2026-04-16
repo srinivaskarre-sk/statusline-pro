@@ -1,4 +1,4 @@
-import { formatStreak, getStreak } from "./streak.js";
+import { formatBranch, getBranchCommits } from "./branch.js";
 import { formatMood } from "./mood.js";
 import { getHNStatus } from "./hackernews.js";
 import { formatSession } from "./session.js";
@@ -10,7 +10,7 @@ export async function render(input) {
   const segments = [
     formatMood(),
     formatSession(input),
-    formatStreak(getStreak()),
+    formatBranch(getBranchCommits()),
     hn,
   ].filter(Boolean);
 

@@ -1,7 +1,7 @@
 {
   "name": "statusline-pro",
   "version": "0.1.0",
-  "description": "A lightweight, fun Claude Code status line with session stats, git streaks, mood, and Hacker News headlines",
+  "description": "A lightweight, fun Claude Code status line with session stats, branch commit counts, mood, and Hacker News headlines",
   "main": "src/index.js",
   "bin": {
     "statusline-pro": "./bin/cli.js"

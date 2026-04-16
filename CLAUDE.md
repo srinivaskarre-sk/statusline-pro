@@ -28,7 +28,7 @@ There is no linter, formatter, or test framework configured. `npm test` just run
 
 `render(input)` builds a list of segment strings and joins them with `  │  `. Each segment is produced by a module in `src/` and is responsible for returning `""` when it has nothing to show (falsy segments are filtered out). Adding a segment = write a `formatX()` that returns a string or `""`, import it, and add to the array.
 
-Current segments, in order: `formatMood()`, `formatSession(input)`, `formatStreak(getStreak())`, `getHNStatus()`.
+Current segments, in order: `formatMood()`, `formatSession(input)`, `formatBranch(getBranchCommits())`, `getHNStatus()`.
 
 ### Input shape (`src/session.js`)
 
@@ -52,9 +52,11 @@ This is the only segment that does network I/O, and the pattern matters:
 
 When modifying this module, preserve the invariant that **a cold render never blocks on the network for more than 3s** and a warm render never blocks at all.
 
-### Streak (`src/streak.js`)
+### Branch (`src/branch.js`)
 
-Shells out to `git log` via `execSync` with a 2s timeout and swallows errors. Runs inside whatever directory Claude Code invoked the status line from (the user's project, not this repo), so the streak reflects the user's current project.
+Counts commits on the current branch that aren't on the default branch (`git rev-list --count <base>..HEAD`) — effectively "commits you'd include in a PR from here." All git calls are `execSync` with a 2s timeout and swallowed errors.
+
+Default-branch detection tries, in order: `git symbolic-ref refs/remotes/origin/HEAD`, then `origin/main`, `origin/master`, `main`, `master`. Returns `{count: 0}` (→ segment hidden) when on the default branch itself, in detached HEAD, or outside a git repo. Runs inside whatever directory Claude Code invoked the status line from, so it reflects the user's current project.
 
 ## Conventions
 

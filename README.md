@@ -1,9 +1,9 @@
 # statusline-pro
 
-A lightweight Claude Code status line with session stats, git streaks, time-of-day mood, and Hacker News headlines — all in one line.
+A lightweight Claude Code status line with session stats, branch commit counts, time-of-day mood, and Hacker News headlines — all in one line.
 
 ```
-☕Peak focus  │  ⏱ 12m3s 🔥 15.2k tok 47% ctx $0.42  │  🔥3d | 2 today  │  📰 [312↑] Title of story (example.com)
+☕Peak focus  │  ⏱ 12m3s 🔥 15.2k tok 47% ctx $0.42  │  🌿 +3  │  📰 [312↑] Title of story (example.com)
 ```
 
 ## Setup
@@ -54,7 +54,7 @@ Then remove the `statusLine` block from `~/.claude/settings.json`.
 |---|---|
 | 🌅 / ☕ / 🌙 + label | Local time of day |
 | ⏱ duration, 🔥 tokens, `%` context, `$` cost | JSON piped in by Claude Code |
-| 🔥Nd + `N today` | `git log` in your project's cwd — daily commit streak + today's commits |
+| 🌿 +N | Commits on your current branch that aren't on the default branch yet (i.e. what would go in a PR). Hidden on the default branch or outside a git repo |
 | 📰 `[score↑] title (domain)` | Hacker News top stories, cached for 30 min. Title is a clickable OSC8 hyperlink in supported terminals (iTerm2, WezTerm, Kitty, Terminal.app) |
 
 Segments with nothing to show (e.g. no git history, no cost data) are omitted silently.
@@ -68,7 +68,7 @@ bin/cli.js            # stdin reader + entry point
 src/index.js          # render() — composes segments
 src/mood.js           # time-of-day label
 src/session.js        # parses Claude Code's session JSON
-src/streak.js         # git commit streak
+src/branch.js         # commits on current branch ahead of default
 src/hackernews.js     # HN fetch + cache + rotation
 src/refresh-worker.js # detached background cache refresher
 ```
