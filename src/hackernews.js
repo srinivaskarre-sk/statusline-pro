@@ -13,6 +13,7 @@ const STORY_COUNT = 30;
 const FETCH_TIMEOUT_MS = 3000;
 const MAX_AGE_HOURS = 24; // Only show stories posted in the last 24h
 const MIN_SCORE = 50; // Filter out low-signal stories
+const STORY_MIN_DISPLAY_MS = 15 * 1000; // Keep each story on screen long enough to read
 
 function ensureDir() {
   if (!existsSync(CONFIG_DIR)) mkdirSync(CONFIG_DIR, { recursive: true });
@@ -96,11 +97,27 @@ function triggerBackgroundRefresh() {
 
 function getNextStory(stories) {
   ensureDir();
-  const state = readJson(STATE_FILE, { index: 0 });
-  const story = stories[state.index % stories.length];
-  const nextIndex = (state.index + 1) % stories.length;
-  writeFileSync(STATE_FILE, JSON.stringify({ index: nextIndex }));
-  return story;
+  const state = readJson(STATE_FILE, { index: 0, showedAt: 0 });
+  const now = Date.now();
+  let { index = 0, showedAt = 0 } = state;
+  const elapsed = now - showedAt;
+
+  let changed = false;
+  if (showedAt === 0 || elapsed < 0) {
+    // First render (or clock skew): stamp current index, don't advance.
+    showedAt = now;
+    changed = true;
+  } else if (elapsed >= STORY_MIN_DISPLAY_MS) {
+    // Current story has had its airtime — rotate to the next.
+    index = (index + 1) % stories.length;
+    showedAt = now;
+    changed = true;
+  }
+
+  if (changed) {
+    writeFileSync(STATE_FILE, JSON.stringify({ index, showedAt }));
+  }
+  return stories[index % stories.length];
 }
 
 function extractDomain(url) {

@@ -98,7 +98,7 @@ There is no linter, formatter, or test framework. `npm test` just runs the CLI.
 
 ### HN cache
 
-Cached at `~/.config/yaccstatus/hn-cache.json` (TTL 30 min). Rotation state at `~/.config/yaccstatus/hn-state.json` — advances one story per render. Delete either file to force a refresh.
+Cached at `~/.config/yaccstatus/hn-cache.json` (TTL 30 min). Rotation state at `~/.config/yaccstatus/hn-state.json` — each story stays on screen for at least 15s before rotating to the next, regardless of how often Claude Code re-renders the status line. Delete either file to reset.
 
 Stale cache is served instantly while a detached background process refreshes it — a cold render never blocks on the network for more than 3s, a warm render never blocks at all.
 
