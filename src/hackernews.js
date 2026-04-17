@@ -138,7 +138,7 @@ function truncate(str, max) {
   return str.slice(0, max - 1) + "\u2026";
 }
 
-export async function getHNStatus() {
+export async function getHNStatus(maxTitle = 65) {
   const cache = readJson(CACHE_FILE, null);
   const now = Date.now();
   const isStale = !cache || now - cache.fetchedAt > CACHE_TTL;
@@ -161,7 +161,7 @@ export async function getHNStatus() {
   if (!story) return "";
 
   const domain = extractDomain(story.url);
-  const title = truncate(story.title, 65);
+  const title = truncate(story.title, maxTitle);
   const scorePart = story.score ? `[${story.score}\u2191] ` : "";
   const label = `\u{1F4F0} ${scorePart}${title}${domain ? ` (${domain})` : ""}`;
   return clickableLink(story.url, label);
